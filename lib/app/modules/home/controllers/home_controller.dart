@@ -1,13 +1,28 @@
+import 'package:booking_app/app/modules/booking_successful/controllers/booking_successful_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../../../routes/app_pages.dart';
 
 class HomeController extends GetxController {
+  CalendarController calenderController = CalendarController();
   static HomeController get to => Get.find();
-  RxList selectedPage = [true, false, false, false, false].obs;
-  String date = "";
-  String time = "";
+  CollectionReference bookAppointment =
+      FirebaseFirestore.instance.collection('bookings');
+  RxList selectedPage = [
+    true,
+    false,
+  ].obs;
+
+  DateTime? appointmentDate;
+  String dayName = "";
+
   RxList<DateTime> offDateList = <DateTime>[].obs;
-  RxList doctorsList = [].obs;
+  RxList? doctorsList = [].obs;
+  RxMap? choosedDoctor = {}.obs;
   final count = 0.obs;
   @override
   void onInit() {
@@ -35,14 +50,40 @@ class HomeController extends GetxController {
   void increment() => count.value++;
 
   getDoctorsList() async {
-    int length = 0;
     CollectionReference data =
         await FirebaseFirestore.instance.collection('doctors');
     QuerySnapshot<Object?> doctorsID = await data.get();
     for (var element in doctorsID.docs) {
-      doctorsList.add(await element.data());
+      doctorsList?.add(await element.data());
     }
 
     print(doctorsList);
+  }
+
+  bookAppoint(BuildContext context, Map data) async {
+    Map _data = {
+      "date_time": appointmentDate,
+      "doctor_detail": {
+        "name": choosedDoctor?['name'],
+        "degree": choosedDoctor?['degree'],
+        "image": choosedDoctor?['image']
+      },
+      "reason": data['reason'],
+      "symptom": data['symptoms']
+    };
+
+    await bookAppointment
+        .add(Map<String, dynamic>.from(_data))
+        .then((value) => BookingSuccessfulController.to.appointText.value =
+            " Your appointment for ${DateFormat('HH:mm a').format(HomeController.to.appointmentDate!)} on ${DateFormat('EEEE').format(HomeController.to.appointmentDate!)} ${DateFormat('dd MMMM yyyy').format(HomeController.to.appointmentDate!)} with ${HomeController.to.choosedDoctor?['name']} has been booked")
+        .then((value) => Get.offAllNamed(Routes.BOOKING_SUCCESSFUL))
+        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Appointment Booked'),
+              backgroundColor: Colors.white,
+            )))
+        .onError((error, stackTrace) {
+      return ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Something went wrong')));
+    });
   }
 }

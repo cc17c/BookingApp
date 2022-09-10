@@ -1,6 +1,7 @@
 import 'package:booking_app/app/modules/home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -21,8 +22,6 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-CalendarController calenderController = CalendarController();
-
 class CalenderWidget extends StatelessWidget {
   const CalenderWidget({Key? key}) : super(key: key);
 
@@ -36,16 +35,34 @@ class CalenderWidget extends StatelessWidget {
                 todayHighlightColor: Colors.transparent,
                 allowViewNavigation: true,
                 minDate: DateTime.now(),
-                controller: calenderController,
+                controller: HomeController.to.calenderController,
                 onTap: (ss) async {
-                  await HomeController.to.getDoctorsList();
-                  HomeController.to.date =
-                      "${ss.date?.day}-${ss.date?.month}-${ss.date?.year}";
-                  HomeController.to.time =
-                      "${ss.date?.hour}:${ss.date?.minute}:${ss.date?.second}";
+                  HomeController.to.appointmentDate = ss.date;
+                  String time = DateFormat('HH:mm')
+                      .format(HomeController.to.appointmentDate!);
 
-                  print(HomeController.to.time);
+                  if (time != "00:00") {
+                    await HomeController.to.getDoctorsList();
+                  }
                 },
+                // onViewChanged: (data) async {
+                //   if (data.visibleDates.length != 1 &&
+                //       HomeController.to.doctorsList!.isNotEmpty) {
+                //     HomeController.to.doctorsList?.clear();
+                //   }
+                // },
+                // onSelectionChanged: (ss) {
+                //   print(ss.date);
+                // },
+                // onAppointmentResizeEnd: (ss) {
+                //   print(ss.appointment);
+                // },
+                // onAppointmentResizeStart: (ss) {
+                //   print(ss.appointment);
+                // },
+                // onAppointmentResizeUpdate: (ss) {
+                //   print(ss.appointment);
+                // },
 
                 timeSlotViewSettings: TimeSlotViewSettings(
                     minimumAppointmentDuration: Duration(minutes: 15),
