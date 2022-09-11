@@ -22,6 +22,7 @@ class BookingSuccessfulView extends GetView<BookingSuccessfulController> {
           Obx(() => Text(
                 controller.appointText.value,
                 style: TextStyle(fontSize: 30),
+                textAlign: TextAlign.center,
               )),
           SizedBox(
             height: 40,
@@ -38,7 +39,7 @@ class BookingSuccessfulView extends GetView<BookingSuccessfulController> {
                 )),
           ),
         ],
-      ),
+      ).paddingAll(10),
     ));
   }
 }

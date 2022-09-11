@@ -4,7 +4,6 @@ class BookingSuccessfulController extends GetxController {
   static BookingSuccessfulController get to => Get.find();
 
   RxString appointText = "".obs;
-
   final count = 0.obs;
   @override
   void onInit() {

@@ -1,7 +1,9 @@
+import 'package:booking_app/app/modules/bookings/controllers/bookings_controller.dart';
 import 'package:booking_app/app/modules/home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({
@@ -23,11 +25,13 @@ class SideMenu extends StatelessWidget {
             color: HomeController.to.selectedPage[0] == true
                 ? Colors.black12
                 : Colors.transparent,
-            press: () {
-              if (HomeController.to.selectedPage[0] == false) {
-                HomeController.to.selectedPage[0] = true;
-                HomeController.to.selectedPage[1] = false;
-              }
+            press: () async {
+              HomeController.to.selectedPage[0] = true;
+              HomeController.to.selectedPage[1] = false;
+              HomeController.to.calenderController.view = CalendarView.month;
+              // if (HomeController.to.selectedPage[0] == false) {
+
+              // }
             },
           ),
           DrawerListTile(
@@ -36,10 +40,12 @@ class SideMenu extends StatelessWidget {
             color: HomeController.to.selectedPage[1] == true
                 ? Colors.black12
                 : Colors.transparent,
-            press: () {
+            press: () async {
               if (HomeController.to.selectedPage[1] == false) {
                 HomeController.to.selectedPage[1] = true;
                 HomeController.to.selectedPage[0] = false;
+                HomeController.to.doctorsList?.clear();
+                await BookingsController.to.getBookings();
               }
             },
           ),

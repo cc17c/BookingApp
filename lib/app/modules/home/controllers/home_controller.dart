@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
 import '../../../routes/app_pages.dart';
 
 class HomeController extends GetxController {
@@ -18,7 +17,6 @@ class HomeController extends GetxController {
   ].obs;
 
   DateTime? appointmentDate;
-  String dayName = "";
 
   RxList<DateTime> offDateList = <DateTime>[].obs;
   RxList? doctorsList = [].obs;
@@ -26,6 +24,14 @@ class HomeController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
+    calenderController.addPropertyChangedListener((p0) {
+      if (doctorsList!.isNotEmpty) {
+        if (p0 == "calendarView") {
+          doctorsList?.clear();
+          appointmentDate = null;
+        }
+      }
+    });
     super.onInit();
   }
 
@@ -41,7 +47,7 @@ class HomeController extends GetxController {
       offDateList.add(
           DateTime.fromMicrosecondsSinceEpoch(element.microsecondsSinceEpoch));
     }
-    print(offDateList);
+
     super.onReady();
   }
 
@@ -53,11 +59,11 @@ class HomeController extends GetxController {
     CollectionReference data =
         await FirebaseFirestore.instance.collection('doctors');
     QuerySnapshot<Object?> doctorsID = await data.get();
+
+    doctorsList?.clear();
     for (var element in doctorsID.docs) {
       doctorsList?.add(await element.data());
     }
-
-    print(doctorsList);
   }
 
   bookAppoint(BuildContext context, Map data) async {

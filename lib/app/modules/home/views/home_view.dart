@@ -3,9 +3,7 @@ import 'package:booking_app/app/modules/home/views/dashboard_screen.dart';
 import 'package:booking_app/app/modules/home/views/doctors_list.dart';
 import 'package:booking_app/app/modules/home/views/side_menu.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../../../../utilities/responsive.dart';
 import '../controllers/home_controller.dart';
 
